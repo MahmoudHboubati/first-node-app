@@ -1,48 +1,18 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const Joi = require("joi");
+const genres = require("./routes/genres");
+const express = require("express");
+const app = express();
 
-mongoose.connect('mongodb://localhost/playground')
-    .then(() => console.log('connected to mongo db'));
+mongoose
+  .connect("mongodb://localhost/playground")
+  .then(() => console.log("connected to mongo db"))
+  .catch(err => {
+    console.log(`cann't connect to mongo`);
+  });
 
-const courseShema = new mongoose.Schema({
-    name: String,
-    author: String,
-    tags: [String],
-    date: {type: Date, default: Date.now},
-    isPublished: Boolean
-});
+app.use(express.json());
+app.use("/api/genres", genres);
 
-async function updateCourse(id) {
-    const result = await Course.update({
-        _id: id
-    }, {
-        $set: {
-            author: "Mahmoud",
-            isPublished: false
-        }
-    });
-
-    if (!course) return;
-
-    course.isPublished = true;
-    course.author = "Another Author";
-
-    const result = await course.save();
-    console.log(result);
-}
-
-// updateCourse('');
-
-async function removeCourse(id) {
-    const result = await Course.deleteOne({
-        _id: id
-    });
-    console.log(result);
-}
-// removeCourse('');
-
-async function removeCourses(id) {
-    // const result = await Course.deleteMany({_id: id});
-    const course = Course.findByIdAndRemove(id);
-    console.log(course);
-}
-// removeCourses('')
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Listining on port ${port}...`));
